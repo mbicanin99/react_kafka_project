@@ -32,6 +32,7 @@ const App = () => {
         return date.toLocaleDateString('en-GB'); // Formatiraj datum u "dd/MM/yy"
       });
 
+      const chartTemperatureData = data.map((entry) => entry.temp_celsius);
 
       console.log(data)
 
