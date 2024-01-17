@@ -12,16 +12,19 @@ const App = () => {
   useEffect(() => {
     const socket = io('http://localhost:8000');
 
-   socket.on('message', (message) => {
+     socket.on('message', (message) => {
       const newData = JSON.parse(message);
-     setData((prevData) => [...prevData, newData]);
-   });
+      setData((prevData) => [...prevData, newData]);
+     });
 
-    
+    //setData([{ dt: 1638472800, temp_celsius: 20 }, { dt: 1638562800, temp_celsius: 25 }]);
+
     return () => {
       socket.disconnect();
     };
   }, []);
+
+  
 
   useEffect(() => {
     // Formatiranje podataka za grafikon samo ako postoje podaci
@@ -31,7 +34,7 @@ const App = () => {
         return date.toLocaleDateString('en-GB'); // Formatiraj datum u "dd/MM/yy"
       });
 
-      const chartTemperatureData = data.map((entry) => entry.temp_celsius);
+      const chartTemperatureData = data.map((entry) => entry.temperature_celsius);
 
       console.log(data)
 

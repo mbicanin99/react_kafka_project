@@ -1,32 +1,37 @@
 from kafka import KafkaConsumer, KafkaProducer
 import requests, json
 
-#consumer
-consumer = KafkaConsumer('raw-weather',
-                         group_id='my_group',
-                         bootstrap_servers='localhost:9092',
-                         value_deserializer=lambda x:json.loads(x.decode('utf-8')))
-#producer
-producer = KafkaProducer(bootstrap_servers='localhost:9092', acks='all')
 
-nodejs_server_url="https:/localhost:8000/api/receive-data"
+#conf
+bootstrap_servers = 'localhost:9092'
+#consum
+consumer = KafkaConsumer('raw-weather',bootstrap_servers=bootstrap_servers,value_deserializer=lambda x: json.loads(x.decode('utf-8')))
+
+#produc
+producer = KafkaProducer(bootstrap_servers=bootstrap_servers,value_serializer=lambda x: json.dumps(x).encode('utf-8'))
 
 
 for message in consumer:
-    weather_data_json = message.value
 
-    temp_kelvin = float(weather_data_json['main']['temp'])
-    temp_celsius = temp_kelvin - 273.15
+    json_data = message.value
     
 
-    processed_weather_data={
-        'city': weather_data_json.get('name', 'City'),
-        'temp_celsius' : temp_celsius,
-        'date': weather_data_json.get('dt','no date')
+    temperature_kelvin = float(json_data['main']['temp'])
+    temperature_celsius = temperature_kelvin - 273.15
+    print(temperature_celsius)
+
+    processed_data = {
+        
+        'city': json_data.get('name','Unknown City'),
+        'temperature_celsius': round(temperature_celsius,2),
+        'dt': json_data.get('dt','error no date')
+
     }
 
-producer.send('weather-processed', value=processed_weather_data)
-producer.flush()
+    producer.send('weather-processed', value=processed_data)
+    producer.flush()
 
+
+#nikad
 consumer.close()
 producer.close()
