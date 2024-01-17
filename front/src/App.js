@@ -17,8 +17,7 @@ const App = () => {
      setData((prevData) => [...prevData, newData]);
    });
 
-    //setData([{ dt: 1638472800, temp_celsius: 20 }, { dt: 1638562800, temp_celsius: 25 }]);
-
+    
     return () => {
       socket.disconnect();
     };
